@@ -1,6 +1,10 @@
 name: ci - main reusable caller
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/ci-main-reusable-caller.yml"
   workflow_dispatch:
     inputs:
       script_name:
@@ -68,10 +72,10 @@ jobs:
       workflow-files: ${{ github.event.inputs.workflow-files == 'true' && 'yes' || 'no' }}
       icu: ${{ github.event.inputs.icu == 'true' && 'no' || 'yes' }}
       debug: ${{ github.event.inputs.debug == 'true' && 'yes' || 'no' }}
-      script_name: ${{ github.event.inputs.script_name }}
+      script_name: ${{ github.event.inputs.script_name || 'qbt-nox-static.bash' }}
 
   ci-alpine-build:
-    if: github.event.inputs.alpine-build == 'true'
+    if: github.event_name == 'push' || github.event.inputs.alpine-build == 'true'
     concurrency:
       group: ci-alpine-build
       cancel-in-progress: true
@@ -84,7 +88,7 @@ jobs:
       workflow-files: ${{ github.event.inputs.workflow-files == 'true' && 'yes' || 'no' }}
       icu: ${{ github.event.inputs.icu == 'true' && 'no' || 'yes' }}
       debug: ${{ github.event.inputs.debug == 'true' && 'yes' || 'no' }}
-      script_name: ${{ github.event.inputs.script_name }}
+      script_name: ${{ github.event.inputs.script_name || 'qbt-nox-static.bash' }}
 
   ci-alpine-release:
     needs: [ci-alpine-build]

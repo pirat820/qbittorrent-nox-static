@@ -101,7 +101,7 @@ jobs:
     uses: $/.github/workflows/ci-alpine-release.yml
 
   ci-auto-rerun-failed-jobs:
-    if: failure() && (github.event.inputs.skip_rerun || 'false') == 'false'
+    if: false # Disable automatic reruns during MIPS build debugging
     needs: [ci-debian-build, ci-alpine-build, ci-alpine-release]
     concurrency:
       group: ci-auto-rerun-failed-jobs

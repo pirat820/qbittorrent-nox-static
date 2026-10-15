@@ -46,7 +46,7 @@ jobs:
       set_skip_icu: ${{ inputs.icu }}
       set_workflow_files: ${{ inputs.workflow-files }}
       set_build_debug: ${{ inputs.debug }}
-      set_qbt_mcm_url: "userdocs/musl-cross-make" # default is userdocs/qbt-musl-cross-make
+      set_qbt_mcm_url: "userdocs/qbt-musl-cross-make"
       set_qbt_with_qemu: "" # default is yes
       set_qbt_host_deps: "" # default is no
       set_qbt_host_deps_repo: "" # default is userdocs/qbt-host-deps
@@ -131,6 +131,18 @@ jobs:
       - name: Docker - glibc
         if: matrix.os_id != 'alpine'
         run: docker exec "${container_name}" bash "${script_name}" glibc
+
+
+      - name: Target C library smoke test (MIPS)
+        run: |
+          docker exec "${container_name}" bash -lc '
+            set -eu
+            compiler=/home/gh/qbt-build/bin/mipsel-linux-musl-gcc
+            printf "#include <errno.h>\n#include <stdio.h>\n#include <string.h>\nint main(void) { char buf[32]; errno = EAGAIN; return snprintf(buf, sizeof(buf), \"%s\", strerror(errno)) < 0; }\n" > /tmp/mipsel-smoke.c
+            "$compiler" -static -o /tmp/mipsel-smoke /tmp/mipsel-smoke.c
+            "$compiler" -print-sysroot
+            echo "Target libc C headers and functions: OK"
+          '
 
       - name: Docker - zlib
         run: docker exec "${container_name}" bash "${script_name}" zlib

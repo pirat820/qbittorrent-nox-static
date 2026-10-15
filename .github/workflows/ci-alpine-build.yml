@@ -33,7 +33,7 @@ jobs:
         qbt_libtorrent_version: ["2.0"]
         qbt_qbittorrent_tag: ["release-5.2.4"]
         qbt_build_tool: [""]
-        qbt_linker_mold: ["yes"]
+        qbt_linker_mold: ["no"] # MIPS is not supported by the mold linker; use target GNU ld
         include:
           - qbt_build_tool: ""
             qbt_qt_version_name: ""

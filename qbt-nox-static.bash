@@ -1413,8 +1413,9 @@ _custom_flags() {
 		fi
 	fi
 
-	# include headers
-	if [[ ${os_id} =~ ^(alpine)$ ]]; then
+	# Host Alpine fortify headers are not target-compatible during cross compilation.
+	# Use the cross-toolchain sysroot headers for non-native architectures.
+	if [[ ${os_id} =~ ^(alpine)$ && ${qbt_cross_name} == "default" ]]; then
 		qbt_include_headers="-isystem /usr/include/fortify -I${include_dir}"
 	else
 		qbt_include_headers="-I${include_dir}"
